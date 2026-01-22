@@ -165,6 +165,14 @@ def ref_kernel(data):
 
 def check_correctness(custom_results, ref_results, rtol=1e-3, atol=1e-3):
     """Check if custom kernel output matches reference."""
+    # Check for empty or None results
+    if custom_results is None or not custom_results:
+        return False, "custom_results is None or empty"
+    if ref_results is None or not ref_results:
+        return False, "ref_results is None or empty"
+    if len(custom_results) != len(ref_results):
+        return False, f"Length mismatch: custom={len(custom_results)}, ref={len(ref_results)}"
+
     for i, (custom, ref) in enumerate(zip(custom_results, ref_results)):
         if not torch.allclose(custom, ref, rtol=rtol, atol=atol):
             max_diff = (custom - ref).abs().max().item()
